@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { parseDate, sanitize, validateAppliance, validateCost, validateDates, validateEircode, validateEmail, validateLength, validateMobile, validateModel, validateSerial } from "@/app/shared/utils/utils";
+import pool from "@/lib/db";
+import { convertDateToMysql, parseDate, sanitize, validateAppliance, validateCost, validateDates, validateEircode, validateEmail, validateLength, validateMobile, validateModel, validateSerial } from "@/app/shared/utils/utils";
 
 const filePath = path.join(process.cwd(), "data", "inventory.json");
 const temp = path.join(process.cwd(), "data", "temp.json");
@@ -104,7 +105,7 @@ export async function POST(req) {
         }
 
 
-        // Reading inventory file from disk and storing into array
+        /* // Reading inventory file from disk and storing into array
         let parsedContent; // Temporary for saftey, if we passed the value directly to data, an incorrectly formatted inventory file would cause crash
         let data = [];
 
@@ -113,25 +114,86 @@ export async function POST(req) {
             parsedContent = JSON.parse(fileContent);
         }
 
-        if (!Array.isArray(parsedContent)) parsedContent = []; // If the inventory file we mentioned above is there, we clear the input essentially
+        if (!Array.isArray(parsedContent)) parsedContent = []; // If the inventory file we mentioned above is there, we clear the input essentially */
 
         // Validated entry ready for writing
-        const newAppliance = {
+
+        purchaseDate = convertDateToMysql(values.purchaseDate);
+        warrantyExpiryDate = convertDateToMysql(values.warrantyExpiryDate);
+
+        /* const newAppliance = {
             eircode: values.eircode,
             appliance: values.appliance,
             brand: values.brand,
             modelNumber: values.modelNumber,
             serialNumber: values.serialNumber,
             purchaseDate: values.purchaseDate,
-            warrantyExpiryDate: values.warrantyExpiryDate
+            warrantyExpiryDate: values.warrantyExpiryDate,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            mobile: values.mobile,
+            address: values.address,
+            cost: values.cost
         };
+ */
+        // Check if appliance already exists by serial number
+        const [existingAppliances] = await pool.query(
+            "SELECT * FROM Appliances WHERE serialNumber = ?",
+            [serialNumber]
+        );
 
-        data = parsedContent;
-        data.push(newAppliance);
-        const tempInv = [newAppliance];
+        if (existingAppliances.length > 0) {
+            return Response.json(
+                {
+                    success: false,
+                    message: "Appliance already exists.",
+                },
+                { status: 409 }
+            );
+        }
 
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-        fs.writeFileSync(temp, JSON.stringify(tempInv, null, 2)); //Used for part c, didn't want both endpoints using 1 file
+        // Check if user already exists by email, returns array
+        const [existingUsers] = await pool.query(
+            "SELECT * FROM Users WHERE email = ?",
+            [email]
+        );
+
+        let userId;
+
+        if (existingUsers.length > 0) {
+            userId = existingUsers[0].UserID;
+        } else {
+            const [userResult] = await pool.query(
+                `
+                INSERT INTO Users 
+                (firstName, lastName, email, mobile, address, eircode)
+                VALUES (?, ?, ?, ?, ?, ?)
+                `,
+                [firstName, lastName, email, mobile, address, eircode]
+            );
+
+            userId = userResult.insertId;
+        }
+
+        // Insert appliance linked to that user
+        await pool.query(
+            `
+            INSERT INTO Appliances
+            (userId, appliance, brand, modelNumber, serialNumber, purchaseDate, warrantyExpiryDate, cost)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `,
+            [
+                userId,
+                appliance,
+                brand,
+                modelNumber,
+                serialNumber,
+                purchaseDate,
+                warrantyExpiryDate,
+                cost
+            ]
+        );
 
         return Response.json(
             { values, errors, message: "Appliance successfully registered" },
