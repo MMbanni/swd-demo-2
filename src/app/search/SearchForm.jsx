@@ -18,10 +18,12 @@ export default function SearchForm() {
   function renderDetails() {
     if (!state.appliance) {
       return null;
-    } else  {
+    } else {
       return (
-        <div className="form-section">
+        <div className="result-background">
           <h2>Appliance Details</h2>
+          
+          <div className="result-grid">
 
           <p><strong>Appliance:</strong> {state.appliance.appliance}</p>
           <p><strong>Brand:</strong> {state.appliance.brand}</p>
@@ -30,6 +32,9 @@ export default function SearchForm() {
           <p><strong>Purchase Date:</strong> {state.appliance.purchaseDate}</p>
           <p><strong>Warranty Expires:</strong> {state.appliance.warrantyExpiryDate}</p>
           <p><strong>Cost:</strong> €{state.appliance.cost}</p>
+        </div>
+
+        <div className="result-grid">
 
           <h2>User Info</h2>
 
@@ -40,7 +45,9 @@ export default function SearchForm() {
           <p><strong>Mobile:</strong> {state.appliance.mobile}</p>
           <p><strong>Eircode:</strong> {state.appliance.eircode}</p>
         </div>
-      )}
+        </div>
+      )
+    }
   }
 
   async function handleSubmit(e) {
@@ -53,12 +60,12 @@ export default function SearchForm() {
       errors: result.errors || {},
       appliance: result.appliance || null
     });
-    
+
     console.log(result); // testing
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="search-form">
       <div className="field-row">
         <label>Serial #: </label>
         <Input
@@ -70,8 +77,9 @@ export default function SearchForm() {
           placeholder="0000-0000-0000"
         />
       </div>
-
-      <Button type="submit">Search</Button>
+      <div className="button-row">
+        <Button type="submit">Search</Button>
+      </div>
 
       <Message
         text={
@@ -81,7 +89,7 @@ export default function SearchForm() {
         }
       />
       {renderDetails()}
-      
+
     </form>
   );
 }
