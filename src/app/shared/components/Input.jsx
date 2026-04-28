@@ -7,62 +7,72 @@
 export default function Input({ format, onChange, ...props }) {
   const formatAndForward = (e) => {
     let input = e.target.value;
-    
+
     // Format eircode
     if (format === "eircode") {
       input = input.replace(/ /g, ""); // Replaces space with empty space
-      const first = input.slice(0,3); 
-      const second = input.slice(3,7); // 
-      
+      const first = input.slice(0, 3);
+      const second = input.slice(3, 7); // 
+
       let eircode = first;
-      if(second) eircode += " " + second;
-      
+      if (second) eircode += " " + second;
+
       input = eircode;
     }
-    
+
     // Format model number
     if (format === "model") {
       input = input.replace(/-/g, ""); // 
-      const first = input.slice(0,3);
-      const second = input.slice(3,6);
-      const third = input.slice(6,10);
+      const first = input.slice(0, 3);
+      const second = input.slice(3, 6);
+      const third = input.slice(6, 10);
 
       let model = first;
-      if(second) model += "-" + second;
-      if(third) model += "-" + third;
+      if (second) model += "-" + second;
+      if (third) model += "-" + third;
       input = model;
     }
-    
+
     // Format serial number
     if (format === "serial") {
       input = input.replace(/-/g, "");
-      const first = input.slice(0,4); 
-      const second = input.slice(4,8);
-      const third = input.slice(8,12);
+      const first = input.slice(0, 4);
+      const second = input.slice(4, 8);
+      const third = input.slice(8, 12);
 
       let serial = first;
-      if(second) serial += "-" + second;
-      if(third) serial += "-" + third;
+      if (second) serial += "-" + second;
+      if (third) serial += "-" + third;
       input = serial;
     }
-    
+
     // Format date
     if (format === "date") {
-      input = input.replace(/\D/g, ""); 
-      const day = input.slice(0,2);
-      const month = input.slice(2,4); //
-      const year = input.slice(4,8);
+      input = input.replace(/\D/g, "");
+      const day = input.slice(0, 2);
+      const month = input.slice(2, 4); //
+      const year = input.slice(4, 8);
 
-      let date = day;      
-      if(month) date += "/" + month;
-      if(year) date += "/" + year;
+      let date = day;
+      if (month) date += "/" + month;
+      if (year) date += "/" + year;
       input = date;
     }
-
-    if (format === "cost") {
-      
-    }
     
+    // Allows input of only digits and 1 decimal point
+    if (format === "cost") {
+      input = input.replace(/[^\d.]/g, ""); // Googled regex for digit and period, remove all input  except for those
+
+      if (input.includes(".")) {
+        const firstDot = input.indexOf(".");
+        
+        // Break input into 2 parts on either side of decimal
+        // Any decimal point after the first part is removed
+        input = input.slice(0, firstDot + 1) + input.slice(firstDot + 1).replace(/\./g, "");
+
+      }
+    }
+
     // Condition just to demonstrate reusability,
     // Calls parents onChange handler to ipdate state
     if (onChange) {
