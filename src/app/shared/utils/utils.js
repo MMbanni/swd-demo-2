@@ -108,12 +108,13 @@ export function validateLength(input, message) {
 
 export function validateMobile(mobile) {
   // Regex test for mobil number, only digits, between 6-15 digits 
-  if(!/^[0-9]{6,15}$/.test(mobile)) return { error: "Please enter valid phone number"};
+  if(!(/^[0-9]{6,15}$/.test(mobile))) return { error: "Please enter valid phone number"};
   return mobile
 }
 
+// Regex for email from geeksforgeeks.com
 export function validateEmail(email) {
   // Regex test for mobil number, only digits, between 6-15 digits 
-  if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/.test(email)) return { error: "Please enter valid email"};
+  if(!(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email))) return { error: "Please enter valid email"};
   return email
 }

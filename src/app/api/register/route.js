@@ -21,8 +21,8 @@ export async function POST(req) {
         let warrantyExpiryDate = sanitize(body.warrantyExpiryDate);
         let cost = sanitize(body.cost);
 
-        let fName = sanitize(body.firstName);
-        let lName = sanitize(body.lastName);
+        let firstName = sanitize(body.firstName);
+        let lastName = sanitize(body.lastName);
         let address = sanitize(body.address);
         let mobile = sanitize(body.mobile);
         let email = sanitize(body.email);
@@ -58,11 +58,11 @@ export async function POST(req) {
         cost = validateCost(cost);
         cost.error ? errors.cost = cost.error : values.cost = cost;
 
-        fName = validateLength(fName, "first name");
-        fName.error ? errors.fName = fName.error : values.fName = fName;
+        firstName = validateLength(firstName, "first name");
+        firstName.error ? errors.firstName = firstName.error : values.firstName = firstName;
 
-        lName = validateLength(lName, "last name");
-        lName.error ? errors.lName = lName.error : values.lName = lName;
+        lastName = validateLength(lastName, "last name");
+        lastName.error ? errors.lastName = lastName.error : values.lastName = lastName;
 
         address = validateLength(address, "address");
         address.error ? errors.address = address.error : values.address = address;
