@@ -57,6 +57,10 @@ export function validateCost(cost) {
   if (!(/^\d+(\.\d+)?$/.test(cost))) {
     return { error: "Invalid price. Format is 0.00" };
   }
+  if (/^\d{9,}$/.test(cost)) {
+    return { error: "Invalid price. Format is 0.00" };
+  }
+
   return cost;
 }
 
