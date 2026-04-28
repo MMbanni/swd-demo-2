@@ -103,3 +103,30 @@
     padding-top: 24px;
     margin-top: 24px;
 }
+
+.home {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 30px;
+    text-align: center;
+}
+
+.homeMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.homeMenu a {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-decoration: none;
+    color: black;
+    background: #f5f5f5;
+}
+
+.homeMenu a:hover {
+    background: #e8e8e8;
+}

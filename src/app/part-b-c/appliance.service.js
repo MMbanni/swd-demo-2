@@ -27,12 +27,13 @@ async function apiFetch(url, options) {
 
 
 export async function registerAppliance(data) {
-  return apiFetch("http://localhost:3000/api/register", {
+  return apiFetch("http://localhost:3000/api/add", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
 }
+
 
 export async function getInventory() {
   return apiFetch("http://localhost:3000/api/inventory", {
