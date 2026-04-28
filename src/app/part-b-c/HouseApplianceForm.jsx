@@ -228,7 +228,7 @@ export default function HouseApplianceForm() {
                 format="cost"
                 value={state.values.cost || ""}
                 onChange={handleChange}
-                maxLength={10}
+                maxLength={8}
                 placeholder="0.00"
 
               />
