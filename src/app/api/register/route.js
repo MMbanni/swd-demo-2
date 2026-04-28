@@ -1,11 +1,6 @@
-import fs from "fs";
-import path from "path";
+
 import pool from "@/lib/db";
 import { convertDateToMysql, parseDate, sanitize, validateAppliance, validateCost, validateDates, validateEircode, validateEmail, validateLength, validateMobile, validateModel, validateSerial } from "@/app/shared/utils/utils";
-
-const filePath = path.join(process.cwd(), "data", "inventory.json");
-const temp = path.join(process.cwd(), "data", "temp.json");
-
 
 
 export async function POST(req) {
@@ -94,9 +89,6 @@ export async function POST(req) {
          * Similar to sites using localStorage for user prefs 
          */
         if (Object.keys(errors).length > 0) {
-            /* if (Object.keys(values).length > 0) {
-                fs.writeFileSync(temp, JSON.stringify(values, null, 2));
-            }  */
 
             return Response.json(
                 { values, errors, message: "Error" },
@@ -105,38 +97,11 @@ export async function POST(req) {
         }
 
 
-        /* // Reading inventory file from disk and storing into array
-        let parsedContent; // Temporary for saftey, if we passed the value directly to data, an incorrectly formatted inventory file would cause crash
-        let data = [];
-
-        if (fs.existsSync(filePath)) {
-            const fileContent = fs.readFileSync(filePath, "utf-8");
-            parsedContent = JSON.parse(fileContent);
-        }
-
-        if (!Array.isArray(parsedContent)) parsedContent = []; // If the inventory file we mentioned above is there, we clear the input essentially */
-
         // Validated entry ready for writing
 
         purchaseDate = convertDateToMysql(values.purchaseDate);
         warrantyExpiryDate = convertDateToMysql(values.warrantyExpiryDate);
 
-        /* const newAppliance = {
-            eircode: values.eircode,
-            appliance: values.appliance,
-            brand: values.brand,
-            modelNumber: values.modelNumber,
-            serialNumber: values.serialNumber,
-            purchaseDate: values.purchaseDate,
-            warrantyExpiryDate: values.warrantyExpiryDate,
-            firstName: values.firstName,
-            lastName: values.lastName,
-            email: values.email,
-            mobile: values.mobile,
-            address: values.address,
-            cost: values.cost
-        };
- */
         // Check if appliance already exists by serial number
         const [existingAppliances] = await pool.query(
             "SELECT * FROM Appliances WHERE serialNumber = ?",
@@ -162,7 +127,7 @@ export async function POST(req) {
         let userId;
 
         if (existingUsers.length > 0) {
-            userId = existingUsers[0].UserID;
+            userId = existingUsers[0].userId;
         } else {
             const [userResult] = await pool.query(
                 `
