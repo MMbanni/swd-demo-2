@@ -12,6 +12,18 @@
     background: #f9f9f9;
 }
 
+.form-section {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-section h2 {
+    margin-top: 0;
+    text-align: center;
+}
 .form input,
 .form select {
     
@@ -22,6 +34,22 @@
     border-radius: 6px;
 
     font-size: 14px;
+}
+
+.field-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.field-row label {
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.field-row input,
+.field-row select {
+    flex: 1;
 }
 
 .phone-row {
@@ -66,4 +94,12 @@
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
+}
+
+
+
+.split {
+    border-top: 1px solid #ccc;
+    padding-top: 24px;
+    margin-top: 24px;
 }
