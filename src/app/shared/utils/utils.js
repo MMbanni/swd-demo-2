@@ -81,6 +81,11 @@ export function parseDate(dateStr) {
   return isValid ? date : null; 
 }
 
+export function convertDateToMysql(dateStr) {
+  const parts = dateStr.split("/");
+  return parts[2] + "-" + parts[1] + "-" + parts[0];
+}
+
 export function validateDates([purchaseDate, warrantyExpiryDate]) {
   if (!purchaseDate || !warrantyExpiryDate) return { error: "Invalid date format" };
   if (purchaseDate > warrantyExpiryDate) return { error: "Invalid warranty" };
@@ -118,3 +123,4 @@ export function validateEmail(email) {
   if(!(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email))) return { error: "Please enter valid email"};
   return email
 }
+
