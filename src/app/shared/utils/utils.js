@@ -55,7 +55,7 @@ export function validateSerial(serial) {
 
 export function validateCost(cost) {
   if (!(/^\d+(\.\d+)?$/.test(cost))) {
-    return { error: "Invalid Cost. Format is 0.00" };
+    return { error: "Invalid price. Format is 0.00" };
   }
   return cost;
 }
@@ -101,8 +101,19 @@ export function validateAppliance(appliance) {
 
 export function validateLength(input, message) {
   
-  if(!(/^[A-Za-z]{1,50}$/.test(input))) return { error: `Invalid ${message} ` } ;
-
   if (!input || input.trim() === "") return { error: `Please enter ${message}` }
+  if(!(/^[A-Za-z]{1,50}$/.test(input))) return { error: `Invalid ${message} ` } ;
   return input
+}
+
+export function validateMobile(mobile) {
+  // Regex test for mobil number, only digits, between 6-15 digits 
+  if(!/^[0-9]{6,15}$/.test(mobile)) return { error: "Please enter valid phone number"};
+  return mobile
+}
+
+export function validateEmail(email) {
+  // Regex test for mobil number, only digits, between 6-15 digits 
+  if(!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/.test(email)) return { error: "Please enter valid email"};
+  return email
 }

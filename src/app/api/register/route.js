@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { parseDate, sanitize, validateAppliance, validateBrand, validateCost, validateDates, validateEircode, validateModel, validateSerial } from "@/app/shared/utils/utils";
+import { parseDate, sanitize, validateAppliance, validateCost, validateDates, validateEircode, validateEmail, validateLength, validateMobile, validateModel, validateSerial } from "@/app/shared/utils/utils";
 
 const filePath = path.join(process.cwd(), "data", "inventory.json");
 const temp = path.join(process.cwd(), "data", "temp.json");
@@ -23,6 +23,10 @@ export async function POST(req) {
 
         let fName = sanitize(body.firstName);
         let lName = sanitize(body.lastName);
+        let address = sanitize(body.address);
+        let mobile = sanitize(body.mobile);
+        let email = sanitize(body.email);
+
 
 
 
@@ -45,15 +49,31 @@ export async function POST(req) {
         modelNumber = validateModel(modelNumber);
         modelNumber.error ? errors.modelNumber = modelNumber.error : values.modelNumber = modelNumber;
 
-        brand = validateBrand(brand);
+        brand = validateLength(brand, "brand");
         brand.error ? errors.brand = brand.error : values.brand = brand;
 
         appliance = validateAppliance(appliance);
         appliance.error ? errors.appliance = appliance.error : values.appliance = appliance;
 
-
         cost = validateCost(cost);
         cost.error ? errors.cost = cost.error : values.cost = cost;
+
+        fName = validateLength(fName, "first name");
+        fName.error ? errors.fName = fName.error : values.fName = fName;
+
+        lName = validateLength(lName, "last name");
+        lName.error ? errors.lName = lName.error : values.lName = lName;
+
+        address = validateLength(address, "address");
+        address.error ? errors.address = address.error : values.address = address;
+
+        mobile = validateMobile(mobile);
+        mobile.error ? errors.mobile = mobile.error : values.mobile = mobile;
+
+        email = validateEmail(email);
+        email.error ? errors.email = email.error : values.email = email;
+
+
 
         const p = parseDate(purchaseDate);
         const w = parseDate(warrantyExpiryDate);
