@@ -105,7 +105,7 @@ export async function POST(req) {
         // Check if appliance already exists by serial number
         const [existingAppliances] = await pool.query(
             "SELECT * FROM Appliances WHERE serialNumber = ?",
-            [serialNumber]
+            [values.serialNumber]
         );
 
         if (existingAppliances.length > 0) {
@@ -121,7 +121,7 @@ export async function POST(req) {
         // Check if user already exists by email, returns array
         const [existingUsers] = await pool.query(
             "SELECT * FROM Users WHERE email = ?",
-            [email]
+            [values.email]
         );
 
         let userId;
@@ -135,7 +135,14 @@ export async function POST(req) {
                 (firstName, lastName, email, mobile, address, eircode)
                 VALUES (?, ?, ?, ?, ?, ?)
                 `,
-                [firstName, lastName, email, mobile, address, eircode]
+                [
+                    values.firstName,
+                    values.lastName,
+                    values.email,
+                    values.mobile,
+                    values.address,
+                    values.eircode
+                ]
             );
 
             userId = userResult.insertId;
@@ -150,13 +157,13 @@ export async function POST(req) {
             `,
             [
                 userId,
-                appliance,
-                brand,
-                modelNumber,
-                serialNumber,
+                values.appliance,
+                values.brand,
+                values.modelNumber,
+                values.serialNumber,
                 purchaseDate,
                 warrantyExpiryDate,
-                cost
+                values.cost
             ]
         );
 
