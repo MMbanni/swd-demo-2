@@ -60,6 +60,8 @@ export function validateCost(cost) {
   return cost;
 }
 
+
+
 export function parseDate(dateStr) {
   const parts = dateStr.split("/");
 
@@ -89,11 +91,7 @@ export function validateDates([purchaseDate, warrantyExpiryDate]) {
   };
 }
 
-export function validateBrand(input) {
 
-  if (!input || input.trim() === "") return { error: "Please enter brand name" }
-  return input
-}
 export function validateAppliance(appliance) {
   
   if (!appliances.includes(appliance)) return { error: "Invalid appliance" };
@@ -101,3 +99,10 @@ export function validateAppliance(appliance) {
 }
 
 
+export function validateLength(input, message) {
+  
+  if(!(/^[A-Za-z]{1,50}$/.test(input))) return { error: `Invalid ${message} ` } ;
+
+  if (!input || input.trim() === "") return { error: `Please enter ${message}` }
+  return input
+}

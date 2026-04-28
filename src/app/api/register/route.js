@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { parseDate, sanitize, validateAppliance, validateBrand, validateDates, validateEircode, validateModel, validateSerial } from "@/app/shared/utils/utils";
+import { parseDate, sanitize, validateAppliance, validateBrand, validateCost, validateDates, validateEircode, validateModel, validateSerial } from "@/app/shared/utils/utils";
 
 const filePath = path.join(process.cwd(), "data", "inventory.json");
 const temp = path.join(process.cwd(), "data", "temp.json");
@@ -19,6 +19,10 @@ export async function POST(req) {
         let serialNumber = sanitize(body.serialNumber);
         let purchaseDate = sanitize(body.purchaseDate);
         let warrantyExpiryDate = sanitize(body.warrantyExpiryDate);
+        let cost = sanitize(body.cost);
+
+        let fName = sanitize(body.firstName);
+        let lName = sanitize(body.lastName);
 
 
 
@@ -46,6 +50,10 @@ export async function POST(req) {
 
         appliance = validateAppliance(appliance);
         appliance.error ? errors.appliance = appliance.error : values.appliance = appliance;
+
+
+        cost = validateCost(cost);
+        cost.error ? errors.cost = cost.error : values.cost = cost;
 
         const p = parseDate(purchaseDate);
         const w = parseDate(warrantyExpiryDate);

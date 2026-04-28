@@ -91,7 +91,7 @@ export default function HouseApplianceForm() {
             <label>Last name: </label>
             <Input
               name="lastName"
-              value={state.values.firstName || ""}
+              value={state.values.lastName || ""}
               format="name"
               onChange={handleChange}
               maxLength={20}
