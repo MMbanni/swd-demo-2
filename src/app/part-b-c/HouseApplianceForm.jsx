@@ -1,9 +1,11 @@
 
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { appliances } from "@/app/part-b-c/data/appliances"
 import { Select, Input, Button, Message } from "@/app/shared/components"
-import { registerAppliance, getInventory } from "@/app/part-b-c/appliance.service";
+import { registerAppliance } from "@/app/part-b-c/appliance.service";
+
 
 /*
  * AI usage: Tutorial (?)
@@ -35,17 +37,6 @@ export default function HouseApplianceForm() {
     }));
   }
 
-  // Populates form from latest inventory addition
-  // Data stored in temp.json
-  async function handleGetInventory() {
-    const result = await getInventory();
-    setState({
-      values: result.values || {},
-      errors: result.errors || {},
-      message: result.message
-    })
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -63,6 +54,9 @@ export default function HouseApplianceForm() {
     })
 
   }
+
+  const hasErrors = Object.keys(state.errors).length > 0;
+  const hasSubmitted = state.message || hasErrors;
 
   return (
     <form onSubmit={handleSubmit} className="form">
@@ -103,7 +97,7 @@ export default function HouseApplianceForm() {
             <Input
               name="address"
               value={state.values.address || ""}
-              
+
               onChange={handleChange}
               maxLength={30}
               placeholder="Address"
@@ -239,13 +233,18 @@ export default function HouseApplianceForm() {
 
       {/* Button */}
       <div className="button-row">
-        <Button type="submit">Add to Inventory</Button>
-        <Button type="button" onClick={handleGetInventory}>Check Inventory</Button>
+        <Button type="submit">Add Appliance</Button>
       </div>
 
 
       {/* Message */}
-      <Message text={Object.keys(state.errors).length > 0 ? state.errors : state.message} />
+      <Message text={hasErrors ? state.errors : state.message} />
+
+      {hasSubmitted? (
+        <p>
+          <Link href="/">Back to homepage</Link>
+        </p>
+      ): null}
 
     </form>
   );
