@@ -34,7 +34,7 @@ export default function HouseApplianceForm() {
       }
     }));
   }
-  
+
   // Populates form from latest inventory addition
   // Data stored in temp.json
   async function handleGetInventory() {
@@ -144,6 +144,23 @@ export default function HouseApplianceForm() {
           placeholder="DD/MM/YYYY"
 
         />
+      </div>
+      <div className="form-row">
+        <label> Cost of Appliance: </label>
+        <div className="cost">
+
+          <span className="euro">€</span>
+          <Input
+            className="costInput"
+            name="cost"
+            format="cost"
+            value={state.values.cost || ""}
+            onChange={handleChange}
+            maxLength={10}
+            placeholder="0.00"
+
+          />
+        </div>
       </div>
 
       {/* Button */}

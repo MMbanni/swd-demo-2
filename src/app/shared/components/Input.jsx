@@ -58,6 +58,10 @@ export default function Input({ format, onChange, ...props }) {
       if(year) date += "/" + year;
       input = date;
     }
+
+    if (format === "cost") {
+      
+    }
     
     // Condition just to demonstrate reusability,
     // Calls parents onChange handler to ipdate state
