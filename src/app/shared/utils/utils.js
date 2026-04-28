@@ -53,6 +53,13 @@ export function validateSerial(serial) {
   return serial
 }
 
+export function validateCost(cost) {
+  if (!(/^\d+(\.\d+)?$/.test(cost))) {
+    return { error: "Invalid Cost. Format is 0.00" };
+  }
+  return cost;
+}
+
 export function parseDate(dateStr) {
   const parts = dateStr.split("/");
 
