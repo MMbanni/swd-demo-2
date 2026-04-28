@@ -23,41 +23,41 @@ export default function SearchForm() {
     } else {
       return (
         <div>
-        <div className="result-background">
-          <h2>Appliance Details</h2>
-          
-          <div className="result-grid">
+          <div className="result-background">
+            <h2>Appliance Details</h2>
 
-          <p><strong>Appliance:</strong> {state.appliance.appliance}</p>
-          <p><strong>Brand:</strong> {state.appliance.brand}</p>
-          <p><strong>Model #:</strong> {state.appliance.modelNumber}</p>
-          <p><strong>Serial #:</strong> {state.appliance.serialNumber}</p>
-          <p><strong>Purchase Date:</strong> {state.appliance.purchaseDate}</p>
-          <p><strong>Warranty Expires:</strong> {state.appliance.warrantyExpiryDate}</p>
-          <p><strong>Cost:</strong> €{state.appliance.cost}</p>
-        </div>
-        
-        <h2>User Info</h2>
+            <div className="result-grid">
 
-        <div className="result-grid">         
+              <p><strong>Appliance:</strong> {state.appliance.appliance}</p>
+              <p><strong>Brand:</strong> {state.appliance.brand}</p>
+              <p><strong>Model #:</strong> {state.appliance.modelNumber}</p>
+              <p><strong>Serial #:</strong> {state.appliance.serialNumber}</p>
+              <p><strong>Purchase Date:</strong> {state.appliance.purchaseDate}</p>
+              <p><strong>Warranty Expires:</strong> {state.appliance.warrantyExpiryDate}</p>
+              <p><strong>Cost:</strong> €{state.appliance.cost}</p>
+            </div>
 
-          <p><strong>First Name:</strong> {state.appliance.firstName}</p>
-          <p><strong>Last Name:</strong> {state.appliance.lastName}</p>
-          <p><strong>Address:</strong> {state.appliance.address}</p>
-          <p><strong>Email:</strong> {state.appliance.email}</p>
-          <p><strong>Mobile:</strong> {state.appliance.mobile}</p>
-          <p><strong>Eircode:</strong> {state.appliance.eircode}</p>
+            <h2>User Info</h2>
+
+            <div className="result-grid">
+
+              <p><strong>First Name:</strong> {state.appliance.firstName}</p>
+              <p><strong>Last Name:</strong> {state.appliance.lastName}</p>
+              <p><strong>Address:</strong> {state.appliance.address}</p>
+              <p><strong>Email:</strong> {state.appliance.email}</p>
+              <p><strong>Mobile:</strong> {state.appliance.mobile}</p>
+              <p><strong>Eircode:</strong> {state.appliance.eircode}</p>
+            </div>
+          </div>
+
         </div>
-        </div>
-        <p>
-      <Link href="/">Back to homepage</Link>
-    </p>
-    </div>
-  
-        
+
       )
     }
   }
+
+  const hasErrors = Object.keys(state.errors).length > 0;
+  const hasSubmitted = state.message || hasErrors;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -90,14 +90,16 @@ export default function SearchForm() {
         <Button type="submit">Search</Button>
       </div>
 
-      <Message
-        text={
-          Object.keys(state.errors).length > 0
-            ? state.errors
-            : state.message
-        }
-      />
+      <Message text={hasErrors ? state.errors : state.message} />
+
       {renderDetails()}
+
+      {hasSubmitted? (
+        <p>
+          <Link href="/">Back to homepage</Link>
+        </p>
+      ): null}
+
 
     </form>
   );
