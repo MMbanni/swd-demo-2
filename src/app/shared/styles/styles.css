@@ -130,3 +130,20 @@
 .homeMenu a:hover {
     background: #e8e8e8;
 }
+
+.result-background {
+    margin-top: 20px;
+    padding: 22px;
+
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: white;
+}
+
+.result-background h2 {
+    margin-top: 0;
+    margin-bottom: 14px;
+
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+}
