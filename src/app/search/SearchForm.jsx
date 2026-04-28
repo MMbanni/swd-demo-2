@@ -2,6 +2,8 @@
 
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 import { searchAppliance } from "./search.service";
 import { Input, Button, Message } from "@/app/shared/components"
@@ -20,6 +22,7 @@ export default function SearchForm() {
       return null;
     } else {
       return (
+        <div>
         <div className="result-background">
           <h2>Appliance Details</h2>
           
@@ -33,10 +36,10 @@ export default function SearchForm() {
           <p><strong>Warranty Expires:</strong> {state.appliance.warrantyExpiryDate}</p>
           <p><strong>Cost:</strong> €{state.appliance.cost}</p>
         </div>
+        
+        <h2>User Info</h2>
 
-        <div className="result-grid">
-
-          <h2>User Info</h2>
+        <div className="result-grid">         
 
           <p><strong>First Name:</strong> {state.appliance.firstName}</p>
           <p><strong>Last Name:</strong> {state.appliance.lastName}</p>
@@ -46,6 +49,12 @@ export default function SearchForm() {
           <p><strong>Eircode:</strong> {state.appliance.eircode}</p>
         </div>
         </div>
+        <p>
+      <Link href="/">Back to homepage</Link>
+    </p>
+    </div>
+  
+        
       )
     }
   }
@@ -65,7 +74,7 @@ export default function SearchForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="search-form">
+    <form onSubmit={handleSubmit} className="form">
       <div className="field-row">
         <label>Serial #: </label>
         <Input
@@ -77,7 +86,7 @@ export default function SearchForm() {
           placeholder="0000-0000-0000"
         />
       </div>
-      <div className="button-row">
+      <div>
         <Button type="submit">Search</Button>
       </div>
 
