@@ -147,7 +147,12 @@ export async function PUT(req) {
         userId
       ]
     );
-
+    
+    /**
+     * Limitation: dates are parsed and saved in db in date format
+     * I'll temporarily disable modifying dates
+     * Will fix by saving to db as text
+     */
     await pool.query(
       ` 
         UPDATE appliances
