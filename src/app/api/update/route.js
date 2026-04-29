@@ -80,7 +80,7 @@ export async function PUT(req) {
     email = validateEmail(email);
     email.error ? errors.email = email.error : values.email = email;
 
-    const p = parseDate(purchaseDate);
+    /* const p = parseDate(purchaseDate);
     const w = parseDate(warrantyExpiryDate);
     const dates = validateDates([p, w]);
     if (dates.error) {
@@ -88,7 +88,7 @@ export async function PUT(req) {
     } else {
       values.purchaseDate = purchaseDate;
       values.warrantyExpiryDate = warrantyExpiryDate;
-    }
+    } */
 
     //Checking for errors first to return API error response      
     if (Object.keys(errors).length > 0) {
@@ -100,8 +100,8 @@ export async function PUT(req) {
 
     // Convert dates to MySQL format
     // Will be stored in String in future update
-    purchaseDate = convertDateToMysql(values.purchaseDate);
-    warrantyExpiryDate = convertDateToMysql(values.warrantyExpiryDate);
+    /* purchaseDate = convertDateToMysql(values.purchaseDate);
+    warrantyExpiryDate = convertDateToMysql(values.warrantyExpiryDate); */
 
     const [rows] = await pool.query(
       `
@@ -148,22 +148,18 @@ export async function PUT(req) {
       ]
     );
 
-    // Insert appliance linked to that user
     await pool.query(
-      `
-            INSERT INTO Appliances
-            (userId, appliance, brand, modelNumber, serialNumber, purchaseDate, warrantyExpiryDate, cost)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            `,
+      ` 
+        UPDATE appliances
+        SET modelNumber = ?, brand = ?, appliance = ?, cost = ?
+        WHERE serialNumber = ?
+        ` ,
       [
-        userId,
-        values.appliance,
-        values.brand,
         values.modelNumber,
-        values.serialNumber,
-        purchaseDate,
-        warrantyExpiryDate,
-        values.cost
+        values.brand,
+        values.appliance,
+        values.cost,
+        values.serialNumber
       ]
     );
 
