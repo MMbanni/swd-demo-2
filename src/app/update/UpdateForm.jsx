@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { appliances } from "@/app/part-b-c/data/appliances";
+import { appliances } from "@/app/add/data/appliances";
 import { Select, Input, Button, Message } from "@/app/shared/components";
 import { searchAppliance } from "@/app/search/search.service";
 import { updateAppliance } from "./update.service";

@@ -2,9 +2,9 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { appliances } from "@/app/part-b-c/data/appliances"
+import { appliances } from "@/app/add/data/appliances"
 import { Select, Input, Button, Message } from "@/app/shared/components"
-import { registerAppliance } from "@/app/part-b-c/appliance.service";
+import { registerAppliance } from "@/app/add/appliance.service";
 
 
 export default function HouseApplianceForm() {

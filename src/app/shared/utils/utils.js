@@ -1,9 +1,7 @@
 // Used regex-generator by Olaf Neumann
 // https://regex-generator.olafneumann.org/
 
-import { appliances } from "@/app/part-b-c/data/appliances";
-import { movies } from "@/app/part-a/data/movies";
-import Script from "next/script";
+import { appliances } from "@/app/add/data/appliances";
 
 // Basic input sanitization, prevents adding html tags
 export function sanitize(input) {
