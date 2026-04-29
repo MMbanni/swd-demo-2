@@ -1,44 +1,37 @@
 import pool from "@/lib/db";
 import {
-    sanitize,
-    validateSerial
+  sanitize,
+  validateSerial
 } from "@/app/shared/utils/utils";
 
 export async function POST(req) {
-    try {
-       
-        const body = await req.json();
+  try {
 
-        console.error(body);
-        
+    const body = await req.json();
 
-        let serialNumber = sanitize(body.serialNumber);
-        console.error("serialNumber--------------");
-        console.error(serialNumber);
-        
-        
+    let serialNumber = sanitize(body.serialNumber);
 
-        const values = {};
-        const errors = {};
+    const values = {};
+    const errors = {};
 
-        serialNumber = validateSerial(serialNumber);
-        serialNumber.error
-            ? errors.serialNumber = serialNumber.error
-            : values.serialNumber = serialNumber;
+    serialNumber = validateSerial(serialNumber);
+    serialNumber.error
+      ? errors.serialNumber = serialNumber.error
+      : values.serialNumber = serialNumber;
 
-        if (Object.keys(errors).length > 0) {
-            return Response.json(
-                {
-                    values,
-                    errors,
-                    message: "Error"
-                },
-                { status: 400 }
-            );
-        }
+    if (Object.keys(errors).length > 0) {
+      return Response.json(
+        {
+          values,
+          errors,
+          message: "Error"
+        },
+        { status: 400 }
+      );
+    }
 
-        const [rows] = await pool.query(
-            `
+    const [rows] = await pool.query(
+      `
             SELECT 
                 
                 appliances.appliance,
@@ -60,43 +53,43 @@ export async function POST(req) {
             JOIN Users ON appliances.userId = users.userId
             WHERE appliances.serialNumber = ?
             `,
-            [values.serialNumber]
-        );
+      [values.serialNumber]
+    );
 
-        if (rows.length === 0) {
-            return Response.json(
-                {
-                    values,
-                    errors: {},
-                    message: "No matching appliance",
-                    appliance: null
-                },
-                { status: 404 }
-            );
-        }
-
-        return Response.json(
-            {
-                values,
-                errors: {},
-                message: "Appliance found",
-                appliance: rows[0]
-            },
-            { status: 200 }
-        );
-
-    } catch (e) {
-        console.error(e);
-        console.error("Search route error ================================");
-
-        return Response.json(
-            {
-                values: {},
-                errors: {},
-                message: "Server error",
-                error: e.message
-            },
-            { status: 500 }
-        );
+    if (rows.length === 0) {
+      return Response.json(
+        {
+          values,
+          errors: {},
+          message: "No matching appliance",
+          appliance: null
+        },
+        { status: 404 }
+      );
     }
+
+    return Response.json(
+      {
+        values,
+        errors: {},
+        message: "Appliance found",
+        appliance: rows[0]
+      },
+      { status: 200 }
+    );
+
+  } catch (e) {
+    console.error(e);
+    console.error("Search route error ================================");
+
+    return Response.json(
+      {
+        values: {},
+        errors: {},
+        message: "Server error",
+        error: e.message
+      },
+      { status: 500 }
+    );
+  }
 }
