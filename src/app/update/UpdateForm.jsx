@@ -214,6 +214,7 @@ export default function UpdateForm() {
                   onChange={handleChange}
                   maxLength={14}
                   placeholder="0000-0000-0000"
+                  readOnly
                   />
               </div>
               <div className="field-row">
