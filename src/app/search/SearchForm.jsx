@@ -1,5 +1,3 @@
-// app/part-b-c/form.jsx
-
 "use client";
 
 import Link from "next/link";

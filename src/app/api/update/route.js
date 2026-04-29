@@ -169,7 +169,7 @@ export async function PUT(req) {
     );
 
     return Response.json(
-      { values, errors, message: "Appliance successfully registered" },
+      { values, errors, message: "Appliance successfully updated" },
       { status: 200 }
     );
 

@@ -83,8 +83,6 @@ export default function UpdateForm() {
         <Button type="submit">Find Appliance</Button>
       </form>
 
-      <Message text={hasErrors ? state.errors : state.message} />
-
       {hasSubmitted? (
         <form onSubmit={handleUpdate}>
 
@@ -264,6 +262,8 @@ export default function UpdateForm() {
           <div className="button-row">
             <Button type="submit">Update Appliance</Button>
           </div>
+
+          <Message text={hasErrors ? state.errors : state.message} />
 
 
         </form>
