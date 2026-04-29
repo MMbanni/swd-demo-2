@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { searchAppliance } from "@/app/search/search.service";
 import { Input, Button, Message } from "@/app/shared/components"
+import { deleteAppliance } from "./delete.service";
 
 
 export default function DeleteForm() {
@@ -81,7 +82,7 @@ export default function DeleteForm() {
     async function handleDelete(e) {
       e.preventDefault();
   
-      const result = await deleteAppliance(state.values); // Call update service
+      const result = await deleteAppliance({serialNumber}); // Call update service
   
       setState({
       message: result.message || "",
