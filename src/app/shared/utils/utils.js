@@ -7,6 +7,7 @@ import Script from "next/script";
 
 // Basic input sanitization, prevents adding html tags
 export function sanitize(input) {
+  // Undefined check to avoid returning string "undefined"
   if (input === undefined || input === null) {
     return undefined;
   }

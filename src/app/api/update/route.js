@@ -176,7 +176,7 @@ export async function PUT(req) {
   }
   catch (e) {
     console.error(e);
-    console.error("Add route ======================================================");
+    console.error("Update route ======================================================");
 
     return Response.json(
       { message: "Server error", error: e.message },

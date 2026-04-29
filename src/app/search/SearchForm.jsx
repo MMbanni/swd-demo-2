@@ -56,9 +56,6 @@ export default function SearchForm() {
     }
   }
 
-  const hasErrors = Object.keys(state.errors).length > 0;
-  const hasSubmitted = state.message || hasErrors;
-
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -72,6 +69,9 @@ export default function SearchForm() {
 
     console.log(result); // testing
   }
+
+  const hasErrors = Object.keys(state.errors).length > 0;
+  const hasSubmitted = state.message || hasErrors;
 
   return (
     <form onSubmit={handleSubmit} className="form">
@@ -99,7 +99,6 @@ export default function SearchForm() {
           <Link href="/">Back to homepage</Link>
         </p>
       ): null}
-
 
     </form>
   );

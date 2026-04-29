@@ -7,17 +7,6 @@ import { Select, Input, Button, Message } from "@/app/shared/components"
 import { registerAppliance } from "@/app/part-b-c/appliance.service";
 
 
-/*
- * AI usage: Tutorial (?)
- * I initially misunderstood part c to require that the back-end repopulate the form after submission.
- * I asked AI how this is done in React, and it explained useActionState and server actions.
- * I later realised that this wasn't necessary so I will instead store the server response in client state. 
- */
-
-/**
- * We store an object with valid inputs and another with errors
- * This is based onthe server's response
- */
 export default function HouseApplianceForm() {
   const [state, setState] = useState({
     values: {}, // Valid input
