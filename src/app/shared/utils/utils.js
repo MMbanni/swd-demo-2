@@ -6,11 +6,17 @@ import { movies } from "@/app/part-a/data/movies";
 import Script from "next/script";
 
 // Basic input sanitization, prevents adding html tags
-export function sanitize(input) {  
-    return String(input) 
-        .replace(/</g, "&lt;")  
-        .replace(/>/g, "&gt;")
-        .trim();
+export function sanitize(input) {
+  if (input === undefined || input === null) {
+    return undefined;
+  }
+
+  const cleaned = String(input)
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .trim();
+
+  return cleaned === "" ? undefined : cleaned;
 }
 
 export function validateBooking(movie, time, mobile) {
