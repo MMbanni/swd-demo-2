@@ -1,6 +1,19 @@
 
 import pool from "@/lib/db";
-import { convertDateToMysql, parseDate, sanitize, validateAppliance, validateCost, validateDates, validateEircode, validateEmail, validateLength, validateMobile, validateModel, validateSerial } from "@/app/shared/utils/utils";
+import {
+  convertDateToMysql,
+  parseDate,
+  sanitize,
+  validateAppliance,
+  validateCost,
+  validateDates,
+  validateEircode,
+  validateEmail,
+  validateLength,
+  validateMobile,
+  validateModel,
+  validateSerial
+} from "@/app/shared/utils/utils";
 
 
 export async function POST(req) {
@@ -84,7 +97,7 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-    
+
     // Convert dates to MySQL format
     // Will be stored in String in future update
     purchaseDate = convertDateToMysql(values.purchaseDate);
