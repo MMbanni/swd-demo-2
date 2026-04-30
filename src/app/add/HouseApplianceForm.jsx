@@ -7,15 +7,39 @@ import { Select, Input, Button, Message } from "@/app/shared/components"
 import { registerAppliance } from "@/app/add/appliance.service";
 
 
+/**
+ * Flow:
+ * 1: Object state holds input
+ * 2: All changes hange handled by generic handler
+ * 3: Submit handler collects form data and sends calls service
+ * 4: Service sends form data to route
+ */
+
 export default function HouseApplianceForm() {
+
+  /**
+   * 1
+   * Object state has 3 keys
+   * values: Object holding valid input, valid submissions are returned here as well
+   * errors: Object holding invalid submissions for error message
+   * message: Displays success message
+   */
   const [state, setState] = useState({
     values: {}, // Valid input
     errors: {},
     message: ""
   });
 
-  // Reusable way to do setState, replaces things like setNumber, etc
-  // 
+  
+   
+  /**
+   * 2 
+   * setState takes 1 argument of 2 possible types:
+   * Either a value replace the current state with OR
+   * a callback that takes takes in a variable representing old state & returns new state 
+   * 
+   * This set up is to keep the valid values after submittion and avoid typing a new name for every change handler
+   */
   function handleChange(name, value) {
     setState(prev => ({
       ...prev,
@@ -26,6 +50,13 @@ export default function HouseApplianceForm() {
     }));
   }
 
+  
+  /**
+   * 3
+   * Submit handler calls the service layer
+   * It sets the state based on the results
+   * This is how valid input stays in the fields (Sticky beviour from assignment 1)  
+   */
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -43,7 +74,8 @@ export default function HouseApplianceForm() {
     })
 
   }
-
+  
+  // Just to clean the return
   const hasErrors = Object.keys(state.errors).length > 0;
   const hasSubmitted = state.message || hasErrors;
 

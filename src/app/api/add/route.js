@@ -15,12 +15,27 @@ import {
   validateSerial
 } from "@/app/shared/utils/utils";
 
+/**
+ * Flow
+ * 1: Sanitize input
+ * 2: Build values and errors objects
+ * 3: Check for errors
+ * 4: Confirm appliance isn't dupe
+ * 5: Confirm user exists, otherwise create & assign them the appliance 
+ * 6: Insert appliance in db
+ * 
+ * Errors: 400, 409, 500
+ */
 
 export async function POST(req) {
   try {
     const body = await req.json();
 
-    // sanitize input
+    /**
+     * 1
+     * Input sanitized using utility
+     * Prevents inserting html
+     */
     let eircode = sanitize(body.eircode);
     let appliance = sanitize(body.appliance);
     let brand = sanitize(body.brand);
@@ -36,8 +51,9 @@ export async function POST(req) {
     let mobile = sanitize(body.mobile);
     let email = sanitize(body.email);
 
-
-    /*
+    
+    /**
+     * 2
      * Using result of validators to populate values and errors.
      * Validators return same value if valid,
      * or object like {error: ...} if invalid
@@ -47,6 +63,7 @@ export async function POST(req) {
     const values = {}; // Valid inputs
     const errors = {}; // invalid inputs
 
+    
     eircode = validateEircode(eircode);
     eircode.error ? errors.eircode = eircode.error : values.eircode = eircode
 
@@ -79,31 +96,42 @@ export async function POST(req) {
 
     email = validateEmail(email);
     email.error ? errors.email = email.error : values.email = email;
+    
+    // Bugfix for dates
+    // Dates are confirmed to exist first before parsing
+    let dates = validateDates([purchaseDate, warrantyExpiryDate]);    
 
-    const p = parseDate(purchaseDate);
-    const w = parseDate(warrantyExpiryDate);
-    const dates = validateDates([p, w]);
-    if (dates.error) {
-      errors.dates = dates.error
-    } else {
-      values.purchaseDate = purchaseDate;
-      values.warrantyExpiryDate = warrantyExpiryDate;
+    if (!dates.error) {
+      const p = parseDate(purchaseDate);
+      const w = parseDate(warrantyExpiryDate);
+      dates = validateDates([p, w]);
+      if (dates.error) {
+        errors.dates = dates.error
+      } else {
+        values.purchaseDate = purchaseDate;
+        values.warrantyExpiryDate = warrantyExpiryDate;
+      }
     }
 
-    //Checking for errors first to return API error response      
+    /**
+     * 3
+     * Checking for errors
+     * Error: 400 (generic API error) 
+     */
+
     if (Object.keys(errors).length > 0) {
       return Response.json(
         { values, errors, message: "Error" },
         { status: 400 }
       );
     }
+    
+    /**
+     * 4
+     * Search db for duplicate appliance
+     * Errors: 409 (conflict)
+     */    
 
-    // Convert dates to MySQL format
-    // Will be stored in String in future update
-    purchaseDate = convertDateToMysql(values.purchaseDate);
-    warrantyExpiryDate = convertDateToMysql(values.warrantyExpiryDate);
-
-    // Check if appliance already exists by serial number
     const [existingAppliances] = await pool.query(
       "SELECT * FROM Appliances WHERE serialNumber = ?",
       [values.serialNumber]
@@ -111,31 +139,35 @@ export async function POST(req) {
 
     if (existingAppliances.length > 0) {
       return Response.json(
-        {
-          success: false,
-          message: "Appliance already exists.",
-        },
+        { message: "Appliance already exists."},
         { status: 409 }
       );
     }
 
-    // Check if user already exists by email
+    /**
+     * 5
+     * Search db for user to link the appliance to
+     * If nothing comes up creat the user and assign the appliance 
+     */
+
     const [existingUsers] = await pool.query(
       "SELECT * FROM Users WHERE email = ?",
       [values.email]
     );
 
     let userId;
+    
+    // Search gives back an array so I use length
 
     if (existingUsers.length > 0) {
       userId = existingUsers[0].userId;
     } else {
       const [userResult] = await pool.query(
         `
-                INSERT INTO Users 
-                (firstName, lastName, email, mobile, address, eircode)
-                VALUES (?, ?, ?, ?, ?, ?)
-                `,
+          INSERT INTO Users 
+          (firstName, lastName, email, mobile, address, eircode)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `,
         [
           values.firstName,
           values.lastName,
@@ -146,16 +178,21 @@ export async function POST(req) {
         ]
       );
 
-      userId = userResult.insertId; // MySQL property that returns id of inserted row
+      userId = userResult.insertId; // If new user, I use this MySQL property that returns id of inserted row
     }
+
+    // Convert dates to MySQL format
+    // Will be stored in String in future update
+    purchaseDate = convertDateToMysql(values.purchaseDate);
+    warrantyExpiryDate = convertDateToMysql(values.warrantyExpiryDate);
 
     // Insert appliance linked to that user
     await pool.query(
       `
-            INSERT INTO Appliances
-            (userId, appliance, brand, modelNumber, serialNumber, purchaseDate, warrantyExpiryDate, cost)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            `,
+        INSERT INTO Appliances
+        (userId, appliance, brand, modelNumber, serialNumber, purchaseDate, warrantyExpiryDate, cost)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `,
       [
         userId,
         values.appliance,

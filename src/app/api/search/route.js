@@ -4,11 +4,25 @@ import {
   validateSerial
 } from "@/app/shared/utils/utils";
 
+/**
+ * Flow
+ * 1: Sanitize serial
+ * 2: Build value & error object
+ * 3: Search db for appliance using SN
+ * 4: If succesful returns appliance object with info on appliance and user
+ * 
+ * Errors: 400, 404, 500
+ */
+
 export async function POST(req) {
   try {
-
+    
     const body = await req.json();
-
+    
+    /**
+     * 1
+     * Sanitize input 
+     */
     let serialNumber = sanitize(body.serialNumber);
 
     const values = {};
@@ -18,6 +32,12 @@ export async function POST(req) {
     serialNumber.error
       ? errors.serialNumber = serialNumber.error
       : values.serialNumber = serialNumber;
+    
+    /**
+     * 2
+     * Check for errors
+     * Error: 400 (generic)
+     */    
 
     if (Object.keys(errors).length > 0) {
       return Response.json(
@@ -30,29 +50,36 @@ export async function POST(req) {
       );
     }
 
+    /**
+     * 3
+     * Search db for appliance and user info related to that appliance
+     * 
+     * Error: 404 (Not found)
+     */
+
     const [rows] = await pool.query(
       `
-            SELECT 
-                
-                appliances.appliance,
-                appliances.brand,
-                appliances.modelNumber,
-                appliances.serialNumber,
-                appliances.purchaseDate,
-                appliances.warrantyExpiryDate,
-                appliances.cost,
+        SELECT
+        appliances.appliance,
+        appliances.brand,
+        appliances.modelNumber,
+        appliances.serialNumber,
+        appliances.purchaseDate,
+        appliances.warrantyExpiryDate,
+        appliances.cost,
 
-                users.firstName,
-                users.lastName,
-                users.email,
-                users.mobile,
-                users.address,
-                users.eircode
 
-            FROM appliances
-            JOIN Users ON appliances.userId = users.userId
-            WHERE appliances.serialNumber = ?
-            `,
+        users.firstName,
+        users.lastName,
+        users.email,
+        users.mobile,
+        users.address,
+        users.eircode
+
+        FROM appliances
+        JOIN Users ON appliances.userId = users.userId
+        WHERE appliances.serialNumber = ?
+      `,
       [values.serialNumber]
     );
 

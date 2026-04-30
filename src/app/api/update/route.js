@@ -1,12 +1,9 @@
 
 import pool from "@/lib/db";
 import {
-  convertDateToMysql,
-  parseDate,
   sanitize,
   validateAppliance,
   validateCost,
-  validateDates,
   validateEircode,
   validateEmail,
   validateLength,
@@ -15,19 +12,35 @@ import {
   validateSerial
 } from "@/app/shared/utils/utils";
 
-
+/**
+ * Flow
+ * 1: Sanitize input 
+ * 2: Build values and errors objects
+ * 3: Check for errors
+ * 4: Search db for appliance using SN
+ * 5: Update user info
+ * 6: Update appliance info
+ * 
+ * Errors: 400, 404, 500
+ */
 export async function PUT(req) {
   try {
     const body = await req.json();
 
-    // sanitize input
+    /**
+     * 1
+     * Sanitize input
+     * We won't be dealing with the dates because of a format conflict
+     * I'll fix by storing dates as VARCHAR or adding another parser in future
+     */
+
     let eircode = sanitize(body.eircode);
     let appliance = sanitize(body.appliance);
     let brand = sanitize(body.brand);
     let modelNumber = sanitize(body.modelNumber);
     let serialNumber = sanitize(body.serialNumber);
-    let purchaseDate = sanitize(body.purchaseDate);
-    let warrantyExpiryDate = sanitize(body.warrantyExpiryDate);
+    //let purchaseDate = sanitize(body.purchaseDate);
+    //let warrantyExpiryDate = sanitize(body.warrantyExpiryDate);
     let cost = sanitize(body.cost);
 
     let firstName = sanitize(body.firstName);
@@ -37,7 +50,8 @@ export async function PUT(req) {
     let email = sanitize(body.email);
 
 
-    /*
+    /**
+     * 2
      * Using result of validators to populate values and errors.
      * Validators return same value if valid,
      * or object like {error: ...} if invalid
@@ -80,28 +94,26 @@ export async function PUT(req) {
     email = validateEmail(email);
     email.error ? errors.email = email.error : values.email = email;
 
-    /* const p = parseDate(purchaseDate);
-    const w = parseDate(warrantyExpiryDate);
-    const dates = validateDates([p, w]);
-    if (dates.error) {
-      errors.dates = dates.error
-    } else {
-      values.purchaseDate = purchaseDate;
-      values.warrantyExpiryDate = warrantyExpiryDate;
-    } */
+    /**
+     * 3
+     * Checking for errors
+     * Error: 400 (generic API error) 
+     */
 
-    //Checking for errors first to return API error response      
+
     if (Object.keys(errors).length > 0) {
       return Response.json(
         { values, errors, message: "Error" },
         { status: 400 }
       );
-    }
+    } 
 
-    // Convert dates to MySQL format
-    // Will be stored in String in future update
-    /* purchaseDate = convertDateToMysql(values.purchaseDate);
-    warrantyExpiryDate = convertDateToMysql(values.warrantyExpiryDate); */
+    /**
+     * 4
+     * Search db for appliance and user info related to that appliance
+     * 
+     * Error: 404 (Not found)
+     */
 
     const [rows] = await pool.query(
       `
@@ -129,6 +141,11 @@ export async function PUT(req) {
 
     const userId = rows[0].userId;
 
+    /**
+     * 5
+     * Update user info in db
+     */
+
     await pool.query(
       
       `
@@ -147,12 +164,12 @@ export async function PUT(req) {
         userId
       ]
     );
-    
+
     /**
-     * Limitation: dates are parsed and saved in db in date format
-     * I'll temporarily disable modifying dates
-     * Will fix by saving to db as text
+     * 6
+     * Update appliance info in db
      */
+
     await pool.query(
       ` 
         UPDATE appliances
