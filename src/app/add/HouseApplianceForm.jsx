@@ -59,13 +59,9 @@ export default function HouseApplianceForm() {
    */
   async function handleSubmit(e) {
     e.preventDefault();
-
-    // Necessary step, FormData collects all inputs from the form
-    // It's not a JS Object, so we convert it to one
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-
-    // Calling service layer
+    
+    // Gather form data and call service
+    const data = state.values
     const result = await registerAppliance(data);
     setState({
       values: result.values || {},
